@@ -9,7 +9,7 @@
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-02
 #   Last Modified:  2014-12-03
-#         Version:  1.0
+#         Version:  1.0.1-beta
 #
 ###
 
