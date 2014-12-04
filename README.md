@@ -3,12 +3,14 @@ Slow Website Alert
 
 This script is intended to run in the background and check the speed of a set of websites. If any of the sites are slower than a specific threshold, the script sends an alert.
 
+
 ## Features
 
 - Configurable test frequency.
 - Configurable speed threshold.
 - Supports checking multiple websites in a batch.
 - Supports both email alerts (using sendmail) and Terminal Notifier for Mac.
+
 
 ## Instructions
 
