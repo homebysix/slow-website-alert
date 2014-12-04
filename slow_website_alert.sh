@@ -8,8 +8,8 @@
 #                   slower than a specific threshold, the script sends an alert.
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-02
-#   Last Modified:  2014-12-03
-#         Version:  1.0.1-beta
+#   Last Modified:  2014-12-04
+#         Version:  1.0.1
 #
 ###
 
@@ -89,11 +89,13 @@ if [[ ! -x "$sendmail" ]]; then
 fi # End sendmail validation.
 
 # Let's make sure we're not running tests too quickly.
-if (( $TEST_FREQ < 5 )); then
+if (( $(bc <<< "$TEST_FREQ < 5") == 1 )); then
+    if [[ $DEBUG_MODE == false ]]; then
 
-    echo "Error: It's not recommended to run tests less than 5 seconds apart." >&2
-    exit 1003
+        echo "Error: It's not recommended to run tests less than 5 seconds apart." >&2
+        exit 1003
 
+    fi
 fi # End test frequency validation.
 
 # Let's make sure Terminal Notifier is working, if we're configured to use it.
@@ -113,10 +115,12 @@ fi # End Terminal Notifier validation.
 # Let's make sure MAX_TIME is set to a reasonable value.
 if (( $(bc <<< "$MAX_TIME > 60") == 1 ||
       $(bc <<< "$MAX_TIME < 2") == 1 )); then
+    if [[ $DEBUG_MODE == false ]]; then
 
-    echo "Error: It's recommended to set a MAX_TIME between 2 seconds and 60 seconds." >&2
-    exit 1005
+        echo "Error: It's recommended to set a MAX_TIME between 2 seconds and 60 seconds." >&2
+        exit 1005
 
+    fi
 fi # End MAX_TIME validation.
 
 
@@ -135,7 +139,7 @@ while [[ true ]]; do
     for (( i = 0; i < $SITE_COUNT; i++ )); do
 
         TIME=$(curl -s -w %{time_total}\\n -o /dev/null "${URL[$i]}")
-        printf "\n$(date) : ${URL[$i]} : $TIME seconds" >> "$LOG_FILE"
+        printf "\n$(date) : $(hostname) : ${URL[$i]} : $TIME seconds" >> "$LOG_FILE"
 
         if (( $(bc <<< "$TIME > $MAX_TIME") == 1 )); then
             printf " (greater than $MAX_TIME)" >> "$LOG_FILE"
@@ -153,14 +157,20 @@ while [[ true ]]; do
             if [[ $DEBUG_MODE == true ]]; then
                 # Print the message, if in debug mode.
                 printf "\n$THE_EMAIL\n"
-            else
+            elif [[ $DEBUG_MODE == false ]]; then
+                #statements
                 # Send the message.
                 printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
 
                 # Send notification to Terminal.
                 if [[ $USE_TERMINAL_NOTIFIER == true ]]; then
-                    $notifier -message "$TIME seconds" -title "Slow website alert" -subtitle "${URL[$i]}" -sound Sosumi -open "file://$(pwd)/$LOG_FILE"
+                    $notifier -message "$TIME seconds" -title "Slow website alert" -subtitle "${URL[$i]}" -sound Sosumi -open "file://$(pwd)/$LOG_FILE" -group $(date +%s)
                 fi
+
+            else
+
+                echo "Error: DEBUG_MODE must be set to either \"true\" or \"false\"." >&2
+                exit 1011
 
             fi
 
