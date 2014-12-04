@@ -1,7 +1,7 @@
 WP Plugin Counter Changelog
 ===========================
 
-Version 1.0.1 - pending
+Version 1.0.1 - 2014-12-04
 
 - Created change log (this file).
 - Added check to ensure DEBUG_MODE is set to either true or false.
