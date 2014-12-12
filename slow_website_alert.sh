@@ -9,7 +9,7 @@
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-02
 #   Last Modified:  2014-12-04
-#         Version:  1.0.1
+#         Version:  1.0.2-beta
 #
 ###
 
@@ -138,10 +138,13 @@ while [[ true ]]; do
     # Begin iterating through websites.
     for (( i = 0; i < $SITE_COUNT; i++ )); do
 
-        TIME=$(curl -s -w %{time_total}\\n -o /dev/null "${URL[$i]}")
-        printf "\n$(date) : $(hostname) : ${URL[$i]} : $TIME seconds" >> "$LOG_FILE"
+        TIME1=$(curl -s -w "%{time_total}" -o /dev/null "${URL[$i]}")
+        TIME2=$(curl -s -w "%{time_total}" -o /dev/null "${URL[$i]}")
+        TIME3=$(curl -s -w "%{time_total}" -o /dev/null "${URL[$i]}")
+        AVG_TIME=$(bc <<< "scale=3; ( $TIME1 + $TIME2 + $TIME3 ) / 3")
+        printf "\n$(date) : $(hostname) : ${URL[$i]} : $AVG_TIME seconds" >> "$LOG_FILE"
 
-        if (( $(bc <<< "$TIME > $MAX_TIME") == 1 )); then
+        if (( $(bc <<< "$AVG_TIME > $MAX_TIME") == 1 )); then
             printf " (greater than $MAX_TIME)" >> "$LOG_FILE"
             
             # Construct an email.
@@ -164,7 +167,7 @@ while [[ true ]]; do
 
                 # Send notification to Terminal.
                 if [[ $USE_TERMINAL_NOTIFIER == true ]]; then
-                    $notifier -message "$TIME seconds" -title "Slow website alert" -subtitle "${URL[$i]}" -sound Sosumi -open "file://$(pwd)/$LOG_FILE" -group $(date +%s)
+                    $notifier -message "$AVG_TIME seconds" -title "Slow website alert" -subtitle "${URL[$i]}" -sound Sosumi -open "file://$(pwd)/$LOG_FILE" -group $(date +%s)
                 fi
 
             else
