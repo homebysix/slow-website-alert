@@ -5,6 +5,7 @@ Version 1.0.2 - pending
 
 - Response time is now the average of three `curl` tests.
 - Now includes timestamp in Terminal Notifier alerts.
+- Using functions for log output.
 
 Version 1.0.1 - 2014-12-04
 
