@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ###
 #
@@ -8,7 +8,7 @@
 #                   slower than a specific threshold, the script sends an alert.
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-02
-#   Last Modified:  2014-12-04
+#   Last Modified:  2014-12-20
 #         Version:  1.0.2-beta
 #
 ###
@@ -26,7 +26,7 @@ URL=(
 
 # The name of the log file to which speed results will be saved. By default,
 # this is the name of this script with .log extension.
-LOG_FILE="$(basename $0 | sed 's/.sh/.log/g')"
+LOG_FILE="$(basename "$0" | sed 's/.sh/.log/g')"
 
 
 ################################ ALERT SETTINGS ################################
@@ -42,7 +42,7 @@ TEST_FREQ=300
 EMAIL_TO="you@pretendco.com, somebodyelse@pretendco.com"
 
 # The email notifications will be sent from this email address.
-EMAIL_FROM="$(echo $(whoami)@$(hostname))"
+EMAIL_FROM="$(whoami)@$(hostname)"
 
 # The path to sendmail on your server. Typically /usr/sbin/sendmail.
 sendmail="/usr/sbin/sendmail"
@@ -64,11 +64,19 @@ DEBUG_MODE=false
 ################################## FUNCTIONS ###################################
 
 # Log functions
-APPNAME=$(basename $0 | sed "s/\.sh$//")
-fn_log_info()  { printf "$(date) : $APPNAME : $1\n" >> "$LOG_FILE" }
-fn_log_debug() { printf "$(date) : $APPNAME : [DEBUG] $1\n" >> "$LOG_FILE" }
-fn_log_warn()  { printf "$(date) : $APPNAME : [WARNING] $1\n" >> "$LOG_FILE" }
-fn_log_error() { printf "$(date) : $APPNAME : [ERROR] $1\n" >> "$LOG_FILE" }
+APPNAME=$(basename "$0" | sed "s/\.sh$//")
+fn_log_info() {
+    echo "$(date) : $APPNAME : $1" >> "$LOG_FILE"
+}
+fn_log_debug() {
+    echo "$(date) : $APPNAME : [DEBUG] $1" >> "$LOG_FILE"
+}
+fn_log_warn() {
+    echo "$(date) : $APPNAME : [WARNING] $1" >> "$LOG_FILE"
+}
+fn_log_error() {
+    echo "$(date) : $APPNAME : [ERROR] $1" >> "$LOG_FILE"
+}
 
 
 ######################## VALIDATION AND ERROR CHECKING #########################
@@ -146,7 +154,7 @@ fn_log_info "Website speed tests have started. To stop, press Control-C."
 while [[ true ]]; do
 
     # Begin iterating through websites.
-    for (( i = 0; i < $SITE_COUNT; i++ )); do
+    for (( i = 0; i < SITE_COUNT; i++ )); do
 
         TIME1=$(curl -s -w "%{time_total}" -o /dev/null "${URL[$i]}")
         TIME2=$(curl -s -w "%{time_total}" -o /dev/null "${URL[$i]}")
@@ -169,15 +177,15 @@ while [[ true ]]; do
 
             if [[ $DEBUG_MODE == true ]]; then
                 # Print the message, if in debug mode.
-                printf "\n$THE_EMAIL\n"
+                printf "\n%s\n" "$THE_EMAIL"
             elif [[ $DEBUG_MODE == false ]]; then
                 
                 # Send the message.
-                printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
+                printf "%s" "$THE_EMAIL" | $sendmail "$EMAIL_TO"
 
                 # Send notification to Terminal.
                 if [[ $USE_TERMINAL_NOTIFIER == true ]]; then
-                    $notifier -message "$AVG_TIME seconds" -title "Slow website alert at $(date +%H:%M)" -subtitle "${URL[$i]}" -sound Sosumi -open "file://$(pwd)/$LOG_FILE" -group $(date +%s)
+                    $notifier -message "$AVG_TIME seconds" -title "Slow website alert at $(date +%H:%M)" -subtitle "${URL[$i]}" -sound Sosumi -open "file://$(pwd)/$LOG_FILE" -group "$(date +%s)"
                 fi
 
             else
