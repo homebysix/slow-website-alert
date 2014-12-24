@@ -32,3 +32,10 @@ This script is intended to run in the background and check the speed of a set of
 - Fix known issues above.
 - Ability to test alerts easily.
 - Make compatible with cron.
+- Catch network outage errors.
+
+
+## Acknowledgements
+
+- Thanks to [@laurent22](https://github.com/laurent22) for the logging and terminate trapping functions.
+
