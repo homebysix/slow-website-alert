@@ -1,6 +1,10 @@
 Slow Website Alert Changelog
 ============================
 
+Version 1.0.3 - pending
+
+- Fixed typo that resulted in incorrect email formatting.
+
 Version 1.0.2 - 2014-12-23
 
 - Response time is now the average of three `curl` tests.

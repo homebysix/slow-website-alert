@@ -9,7 +9,7 @@
 #          Author:  Elliot Jordan <elliot@elliotjordan.com>
 #         Created:  2014-12-02
 #   Last Modified:  2014-12-20
-#         Version:  1.0.2-beta
+#         Version:  1.0.3
 #
 ###
 
@@ -177,11 +177,11 @@ while [[ true ]]; do
 
             if [[ $DEBUG_MODE == true ]]; then
                 # Print the message, if in debug mode.
-                printf "\n%s\n" "$THE_EMAIL"
+                printf "\n$THE_EMAIL\n"
             elif [[ $DEBUG_MODE == false ]]; then
                 
                 # Send the message.
-                printf "%s" "$THE_EMAIL" | $sendmail "$EMAIL_TO"
+                printf "$THE_EMAIL" | $sendmail "$EMAIL_TO"
 
                 # Send notification to Terminal.
                 if [[ $USE_TERMINAL_NOTIFIER == true ]]; then
