@@ -29,10 +29,10 @@ This script is intended to run in the background and check the speed of a set of
 
 ## To Do / Roadmap
 
-- Fix known issues above.
-- Ability to test alerts easily.
-- Make compatible with cron.
-- Catch network outage errors.
+- [ ] Fix known issues above.
+- [ ] Ability to test alerts easily.
+- [ ] Make compatible with cron.
+- [ ] Catch network outage errors.
 
 
 ## Acknowledgements
